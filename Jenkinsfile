@@ -21,11 +21,11 @@ pipeline  {
     steps {
         script {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-            dockerUsername = DOCKER_USERNAME
-            dockerPassword = DOCKER_PASSWORD
             
             dockerUsername = getUsername("prudhvi-docker-username")
+            dockerPassword = getPassword("prudhvi-docker-password")
             sh "echo dockerUsername=${dockerUsername}"
+            sh "echo dockerPassword=${dockerPassword}"
           
             docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
