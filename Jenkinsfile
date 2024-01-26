@@ -37,16 +37,19 @@ pipeline  {
   }
 }
 def getUsername(credentialsId) {
-    return getCredentials(credentialsId)?.username
+    return Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
+                           .credentials
+                           .findAll { it.id == credentialsId }
+                           .collect { it.description }
+                           .join(',')
 }
 
 def getPassword(credentialsId) {
-    return getCredentials(credentialsId)?.password
+    return Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
+                           .credentials
+                           .findAll { it.id == credentialsId }
+                           .collect { it.secret.toString() }
+                           .join(',')
 }
 
-def getCredentials(credentialsId) {
-    def credentialsProvider = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
-    def credentials = credentialsProvider.credentials.findAll { it.id == credentialsId }
-    return credentials ? credentials[0] : null
-}
 
