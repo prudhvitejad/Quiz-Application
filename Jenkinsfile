@@ -4,7 +4,7 @@ ho hpipeline  {
     stage("testing")  {
       steps  {
         script  {
-          sh "docker ps"
+
         }
       }
     }
