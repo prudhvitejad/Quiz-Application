@@ -28,9 +28,9 @@ pipeline  {
             sh "echo dockerUsername=${dockerUsername}"
             sh "echo dockerPassword=${dockerPassword}"
 
-            sh "docker build -t ${dockerUsername}/quiz-app:${commitId} ."
-            sh "docker login -u ${dockerUsername} ${dockerPassword}"
-            sh "docker push ${dockerUsername}/quiz-app:${commitId}"
+            sh "sudo docker build -t ${dockerUsername}/quiz-app:${commitId} ."
+            sh "sudo docker login -u ${dockerUsername} ${dockerPassword}"
+            sh "sudo docker push ${dockerUsername}/quiz-app:${commitId}"
         }
     }
 }
