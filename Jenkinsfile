@@ -1,8 +1,14 @@
+def dockerUsername
+def dockerPassword
+
 pipeline  {
   agent any
-  triggers  {
-    githubPush()
+  
+  environment {
+        DOCKER_USERNAME = credentials('prudhvi-docker-username')
+        DOCKER_PASSWORD = credentials('prudhvi-docker-password')
   }
+  
   stages  {
     stage("testing")  {
       steps  {
@@ -15,8 +21,8 @@ pipeline  {
     steps {
         script {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-            def dockerUsername = credentials("prudhvi-docker-username")
-            def dockerPassword = credentials("prudhvi-docker-password")
+            dockerUsername = DOCKER_USERNAME
+            dockerPassword = DOCKER_PASSWORD
             sh "echo dockerUsername=${dockerUsername}"
             
             docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
