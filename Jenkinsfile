@@ -26,6 +26,8 @@ pipeline  {
             dockerPassword = getSecretText("prudhvi-docker-password")
             sh "echo dockerUsername=${dockerUsername}"
             sh "echo dockerPassword=${dockerPassword}"
+
+            dockerPassword = DOCKER_PASSWORD
           
             docker.withRegistry("https://registry.hub.docker.com", dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
