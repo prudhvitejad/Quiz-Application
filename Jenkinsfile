@@ -1,4 +1,4 @@
-pipeline  {
+hpipeline  {
   agent any
   stages  {
     stage("testing")  {
