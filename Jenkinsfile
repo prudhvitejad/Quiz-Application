@@ -7,7 +7,7 @@ pipeline  {
     stage("testing")  {
       steps  {
         script  {
-          sh "echo $env.BRANCH"
+          sh "echo env.BRANCH"
         }
       }
     }
