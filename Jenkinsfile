@@ -10,12 +10,9 @@ pipeline  {
   }
   
   stages  {
-    stage("testing")  {
-      steps  {
-        script  {
-          sh "echo ${env.BRANCH_NAME}"
-        }
-      }
+    stage('Initialize'){
+        def dockerHome = tool "myDocker"
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
     }
     stage('Build and Push Docker Image') {
     steps {
