@@ -1,9 +1,11 @@
 pipeline  {
   agent any
-  stages("testing")  {
-    steps  {
-      script  {
-        sh "Testing"
+  stages  {
+    stage("testing")  {
+      steps  {
+        script  {
+          sh "Testing"
+        }
       }
     }
   }
