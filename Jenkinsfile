@@ -22,8 +22,8 @@ pipeline  {
         script {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
             
-            dockerUsername = getUsername("prudhvi-docker-username")
-            dockerPassword = getPassword("prudhvi-docker-password")
+            dockerUsername = getSecretText("prudhvi-docker-username")
+            dockerPassword = getSecretText("prudhvi-docker-password")
             sh "echo dockerUsername=${dockerUsername}"
             sh "echo dockerPassword=${dockerPassword}"
           
@@ -51,5 +51,10 @@ def getPassword(credentialsId) {
                            .collect { it.secret.toString() }
                            .join(',')
 }
-
-
+def getSecretText(credentialsId) {
+    return Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
+                           .credentials
+                           .findAll { it.id == credentialsId }
+                           .collect { it.secret.toString() }
+                           .join(',')
+}
