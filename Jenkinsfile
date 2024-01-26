@@ -23,13 +23,9 @@ pipeline  {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
             dockerUsername = DOCKER_USERNAME
             dockerPassword = DOCKER_PASSWORD
-            sh "echo dockerUsername=${dockerUsername}"
             
-            withCredentials([string(credentialsId: dockerUsername, variable: 'DOCKER_USERNAME'), string(credentialsId: dockerPassword, variable: 'DOCKER_PASSWORD')]) {
-              // Use dockerUsername and dockerPassword variables securely within this block
-              sh 'echo $DOCKER_USERNAME'
-              sh 'echo $DOCKER_PASSWORD'
-            }
+            dockerUsername = getUsername("prudhvi-docker-username")
+            sh "echo dockerUsername=${dockerUsername}"
           
             docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
@@ -40,3 +36,17 @@ pipeline  {
 }
   }
 }
+def getUsername(credentialsId) {
+    return getCredentials(credentialsId)?.username
+}
+
+def getPassword(credentialsId) {
+    return getCredentials(credentialsId)?.password
+}
+
+def getCredentials(credentialsId) {
+    def credentialsProvider = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
+    def credentials = credentialsProvider.credentials.findAll { it.id == credentialsId }
+    return credentials ? credentials[0] : null
+}
+
