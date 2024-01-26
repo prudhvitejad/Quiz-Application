@@ -25,6 +25,12 @@ pipeline  {
             dockerPassword = DOCKER_PASSWORD
             sh "echo dockerUsername=${dockerUsername}"
             
+            withCredentials([string(credentialsId: dockerUsername, variable: 'DOCKER_USERNAME'), string(credentialsId: dockerPassword, variable: 'DOCKER_PASSWORD')]) {
+              // Use dockerUsername and dockerPassword variables securely within this block
+              sh 'echo $DOCKER_USERNAME'
+              sh 'echo $DOCKER_PASSWORD'
+            }
+          
             docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
                 dockerImage.push("${commitId}")
