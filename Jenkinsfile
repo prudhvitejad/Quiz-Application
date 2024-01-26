@@ -27,7 +27,7 @@ pipeline  {
             sh "echo dockerUsername=${dockerUsername}"
             sh "echo dockerPassword=${dockerPassword}"
           
-            docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
+            docker.withRegistry("https://registry.hub.docker.com", dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
                 dockerImage.push("${commitId}")
             }
