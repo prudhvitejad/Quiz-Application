@@ -17,7 +17,7 @@ pipeline  {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
             def dockerUsername = credentials("prudhvi-docker-username")
             def dockerPassword = credentials("prudhvi-docker-password")
-            sh "echo commitId=${commitId},dockerUsername=${dockerUsername},dockerPassword=${dockerPassword}"
+            sh "echo dockerUsername=${dockerUsername},dockerPassword=${dockerPassword}"
             
             docker.withRegistry("https://registry.hub.docker.com", dockerUsername, dockerPassword) {
                 def dockerImage = docker.build("${dockerUsername}/quiz-app:${commitId}")
