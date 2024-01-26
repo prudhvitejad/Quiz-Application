@@ -1,10 +1,13 @@
 pipeline  {
   agent any
+  triggers  {
+    githubPush()
+  }
   stages  {
     stage("testing")  {
       steps  {
         script  {
-          sh "echo Testing"
+          sh "echo $env.BRANCH"
         }
       }
     }
