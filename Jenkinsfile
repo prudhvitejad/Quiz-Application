@@ -1,10 +1,10 @@
-hpipeline  {
+ho hpipeline  {
   agent any
   stages  {
     stage("testing")  {
       steps  {
         script  {
-          sh "Testing"
+          sh "echo Testing"
         }
       }
     }
