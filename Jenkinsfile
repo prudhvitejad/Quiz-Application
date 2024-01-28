@@ -29,19 +29,12 @@ pipeline  {
             sh "echo dockerPassword=${dockerPassword}"
 
             sh "docker build -t ${dockerUsername}/quiz-app:${commitId} ."
-            sh "docker login -u ${dockerUsername} ${dockerPassword}"
+            sh "docker login -u ${dockerUsername} -p ${dockerPassword}"
             sh "docker push ${dockerUsername}/quiz-app:${commitId}"
         }
     }
 }
   }
-}
-def getUsername(credentialsId) {
-    return Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0]
-                           .credentials
-                           .findAll { it.id == credentialsId }
-                           .collect { it.description }
-                           .join(',')
 }
 
 def getSecretText(credentialsId) {
