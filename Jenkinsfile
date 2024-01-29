@@ -21,7 +21,7 @@ pipeline  {
     stage('Checkout') {
             steps {
                 script {
-                    git branch: env.BRANCH_NAME, url: 'https://github.com/prudhvitejad/Quiz-Application.git'
+                    git branch: 'development', url: 'https://github.com/prudhvitejad/Quiz-Application.git'
                 }
             }
         }
