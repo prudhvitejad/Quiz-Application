@@ -18,6 +18,13 @@ pipeline  {
         }
       }  
     }
+    stage('Checkout') {
+            steps {
+                script {
+                    git branch: env.BRANCH_NAME, url: 'https://github.com/prudhvitejad/Quiz-Application.git'
+                }
+            }
+        }
     stage('Build and Push Docker Image') {
     steps {
         script {
