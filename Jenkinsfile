@@ -2,7 +2,7 @@ def dockerUsername
 def dockerPassword
 
 pipeline  {
-  agent any
+  agent slave-agent
   
   environment {
         DOCKER_USERNAME = credentials('prudhvi-docker-username')
