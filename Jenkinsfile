@@ -59,7 +59,7 @@ pipeline  {
             sh "docker pull ${imageName}"
             
             // Register a new revision of the task definition
-            def registerTaskDefCmd = "aws ecs register-task-definition --family ${taskDefinition} --container-definitions '[{\"name\":\"container-name\",\"image\":\"${imageName}\",\"cpu\":0,\"memoryReservation\":512}]'"
+            def registerTaskDefCmd = "aws ecs register-task-definition --family ${taskDefinition} --container-definitions '[{\"name\":\"quiz-app\",\"image\":\"${imageName}\",\"cpu\":0,\"memoryReservation\":512}]'"
             def registerTaskDefOutput = sh(script: registerTaskDefCmd, returnStdout: true).trim()
             
             // Extract the revision number from the output
