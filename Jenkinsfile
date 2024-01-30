@@ -49,17 +49,19 @@ pipeline  {
     steps {
         script {
             def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-            def imageName = "${dockerUsername}/quiz-app:${commitId}"
+            def imageName = "prudhvitejad/quiz-app:${commitId}"
             def taskDefinition = "Prudhvi-task-definition-family"
             def cluster = "Prudhvi-task1"
             def service = "Prudhvi-task1-service"
+            def containerName = "quiz-app"
             
             // Pull the latest Docker image
             sh "docker login -u ${dockerUsername} -p ${dockerPassword}"
             sh "docker pull ${imageName}"
             
             // Register a new revision of the task definition
-            def registerTaskDefCmd = "aws ecs register-task-definition --family ${taskDefinition} --container-definitions '[{\"name\":\"quiz-app\",\"image\":\"${imageName}\",\"cpu\":0,\"memoryReservation\":512}]'"
+            def taskDefinitionInputJson = generateTaskDefinitionJson(taskDefinition, imageName, containerName)
+            def registerTaskDefCmd = "aws ecs register-task-definition --cli-input-json '${taskDefinitionInputJson}'"
             def registerTaskDefOutput = sh(script: registerTaskDefCmd, returnStdout: true).trim()
             
             // Extract the revision number from the output
@@ -84,4 +86,56 @@ def getSecretText(credentialsId) {
                            .findAll { it.id == credentialsId }
                            .collect { it.secret.toString() }
                            .join(',')
+}
+
+def generateTaskDefinitionJson(taskDefinition, containerName, imageName) {
+    def taskDefinitionInputJson = """
+        {
+          "family": "${taskDefinition}",
+          "containerDefinitions": [
+            {
+              "name": "${containerName}",
+              "image": "${imageName}",
+              "cpu": 0,
+              "portMappings": [
+                {
+                  "name": "${containerName}-81-tcp",
+                  "containerPort": 81,
+                  "hostPort": 81,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+                }
+              ],
+              "essential": true,
+              "environment": [],
+              "environmentFiles": [],
+              "mountPoints": [],
+              "volumesFrom": [],
+              "ulimits": [],
+              "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/${taskDefinition}",
+                  "awslogs-region": "us-west-2",
+                  "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+              }
+            }
+          ],
+          "executionRoleArn": "arn:aws:iam::022608205880:role/ecsTaskExecutionRole",
+          "networkMode": "awsvpc",
+          "requiresCompatibilities": [
+            "FARGATE"
+          ],
+          "cpu": "1024",
+          "memory": "3072",
+          "runtimePlatform": {
+            "cpuArchitecture": "X86_64",
+            "operatingSystemFamily": "LINUX"
+          }
+        }
+    """
+    return taskDefinitionInputJson
 }
