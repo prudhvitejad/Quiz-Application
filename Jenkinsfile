@@ -60,7 +60,7 @@ pipeline  {
             sh "docker pull ${imageName}"
             
             // Register a new revision of the task definition
-            def taskDefinitionInputJson = generateTaskDefinitionJson(taskDefinition, imageName, containerName)
+            def taskDefinitionInputJson = generateTaskDefinitionJson(taskDefinition, containerName, imageName)
             def registerTaskDefCmd = "aws ecs register-task-definition --cli-input-json '${taskDefinitionInputJson}'"
             def registerTaskDefOutput = sh(script: registerTaskDefCmd, returnStdout: true).trim()
             
