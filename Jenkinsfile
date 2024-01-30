@@ -71,6 +71,13 @@ pipeline  {
     }
 }
   }
+  post {
+  always {
+mail bcc: '', body: '''"Project: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}"''', cc: '', from: '', replyTo: '', subject: '${currentBuild.result}', to: 'prudhvi.teja@kansocloud.com'
+  }
+}
 }
 
 def getSecretText(credentialsId) {
