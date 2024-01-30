@@ -65,8 +65,9 @@ pipeline  {
             def registerTaskDefOutput = sh(script: registerTaskDefCmd, returnStdout: true).trim()
             
             // Extract the revision number from the output
-            sh 'echo ${registerTaskDefOutput}'
-            def revision = sh(script: "echo ${registerTaskDefOutput} | jq -r '.taskDefinition.revision'", returnStdout: true).trim()
+            def describeTaskDefinitionCmd = "aws ecs describe-task-definition --task-definition ${taskDefinition}"
+            def taskDefinitionOutput = sh(script: describeTaskDefinitionCmd, returnStdout: true).trim()
+            def revision = sh(script: "echo '${taskDefinitionOutput}' | jq -r '.taskDefinition.revision'", returnStdout: true).trim()
             
             // Update the ECS service to use the new task definition revision
             sh "aws ecs update-service --cluster ${cluster} --service ${service} --task-definition ${taskDefinition}:${revision}"
