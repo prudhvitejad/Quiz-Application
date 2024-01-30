@@ -4,6 +4,10 @@ def dockerPassword
 pipeline  {
   agent { label 'slave-agent' }
   
+  triggers {
+    githubPush()
+  }
+  
   environment {
         DOCKER_USERNAME = credentials('prudhvi-docker-username')
         DOCKER_PASSWORD = credentials('prudhvi-docker-password')
