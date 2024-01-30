@@ -45,6 +45,31 @@ pipeline  {
         }
     }
 }
+    stage("Update Docker image in the ECS Task Definition") {
+    steps {
+        script {
+            def commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+            def imageName = "${dockerUsername}/quiz-app:${commitId}"
+            def taskDefinition = "Prudhvi-task-definition-family"
+            def cluster = "Prudhvi-task1"
+            def service = "Prudhvi-task1-service"
+            
+            // Pull the latest Docker image
+            sh "docker login -u ${dockerUsername} -p ${dockerPassword}"
+            sh "docker pull ${imageName}"
+            
+            // Register a new revision of the task definition
+            def registerTaskDefCmd = "aws ecs register-task-definition --family ${taskDefinition} --container-definitions '[{\"name\":\"container-name\",\"image\":\"${imageName}\",\"cpu\":0,\"memoryReservation\":512}]'"
+            def registerTaskDefOutput = sh(script: registerTaskDefCmd, returnStdout: true).trim()
+            
+            // Extract the revision number from the output
+            def revision = sh(script: "echo ${registerTaskDefOutput} | jq -r '.taskDefinition.revision'", returnStdout: true).trim()
+            
+            // Update the ECS service to use the new task definition revision
+            sh "aws ecs update-service --cluster ${cluster} --service ${service} --task-definition ${taskDefinition}:${revision}"
+        }
+    }
+}
   }
 }
 
